@@ -1,0 +1,20 @@
+table ip filter {
+
+	set portas_liberadas {
+	   type inet_service
+	}
+
+	set portas_bloqueadas {
+	   type inet_service
+	   elements = { 
+			80,
+			81
+	   } 
+	}
+
+    chain debug_remoto {
+        type filter hook input priority 0; policy accept;
+		tcp dport @portas_liberadas  counter accept
+		tcp dport @portas_bloqueadas counter drop
+    }
+}

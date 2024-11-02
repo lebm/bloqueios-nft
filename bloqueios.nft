@@ -4,10 +4,13 @@ flush ruleset
 
 table ip filter {
     chain input {
+
         type filter hook input priority 0; policy accept;
-        ct state established,related accept
-        icmp type echo-request counter accept
+
+        ct state established,related   counter accept
+        icmp type echo-request counter counter accept
         iifname lo accept
+
     }
 }
 
