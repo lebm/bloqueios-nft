@@ -11,5 +11,6 @@ table ip filter {
     }
 }
 
-include "/etc/nftables/bloqueios/*.nft"
+#include "/etc/nftables/bloqueios/*.nft"
+include "/home/bravo/nft/bloqueios/*.nft"
 

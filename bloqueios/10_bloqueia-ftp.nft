@@ -1,4 +1,10 @@
+define ORIGENS_PERMITIDAS = {
+    192.168.122.1,
+    192.168.122.2
+}
+
 add chain ip filter bloqueio_ftp { type filter hook input priority filter; policy accept; }
-add rule filter bloqueio_ftp ip saddr 192.168.122.1 tcp dport 21 counter accept
-add rule filter bloqueio_ftp ip saddr 192.168.122.2 tcp dport 21 counter accept
+#add rule filter bloqueio_ftp ip saddr 192.168.122.1 tcp dport 21 counter accept
+#add rule filter bloqueio_ftp ip saddr 192.168.122.2 tcp dport 21 counter accept
+add rule filter bloqueio_ftp ip saddr $ORIGENS_PERMITIDAS tcp dport 21 counter accept
 add rule filter bloqueio_ftp tcp dport 21 counter drop
