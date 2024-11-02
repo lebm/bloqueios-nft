@@ -1,0 +1,2 @@
+add chain ip filter debug_remoto { type filter hook input priority filter; policy accept; }
+add rule filter debug_remoto tcp dport 81 counter drop
