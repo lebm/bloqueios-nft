@@ -1,0 +1,56 @@
+---
+- name: Cria bloqueio de portas para debug remoto 
+  hosts: all
+  gather_facts: True
+  vars:
+      portas_debug_remoto_bloqueadas:
+          rhel8a:
+              - 1000
+              - 2000
+          rhel8b:
+              - 1001
+              - 2002
+
+  tasks:
+  - name: Cria string com a relação das portas
+    ansible.builtin.set_fact:
+        lista_de_portas: "{{ portas_debug_remoto_bloqueadas[ansible_facts.nodename] | join(',') }}"
+
+  - ansible.builtin.debug:
+      msg: "Portas bloqueados por defautl de {{ ansible_facts.nodename }}: {{ lista_de_portas }}"
+
+  - name: Cria arquivo de bloqueio de portas
+    ansible.builtin.copy:
+        content: |
+            table ip filter {
+
+                # Esse set começa vazio.
+                # Será preenchido sob demanda quando for necessário abrir a porta de debug remoto.
+                set portas_liberadas {
+                   type inet_service
+                }
+
+                # Esse set começa preenchido com as portas de debug remoto que precisam ser bloqueadas por default.
+                set portas_bloqueadas {
+                   type inet_service
+                   elements = { {{ lista_de_portas }} }
+                }
+
+                # As regras de accept e drop são criadas por default.
+                # Inicialmente o set portas_liberadas está vazio.
+                # Para liberar um porta é necessário executar:
+                #    sudo nft "add element ip filter portas_liberadas { <PORTA> }"
+                # Esse comando adiciona <PORTA> ao set portas_liberadas.
+                # Dessa forma a regra de accept passa a liberar acesso p/ <PORTA>
+                # Exemplo:
+                #    sudo nft "add element ip filter portas_liberadas { 1000 }"
+                # As portas bloqueados por default para {{ ansible_facts.nodename }} são: {{ lista_de_portas }}
+                chain input {
+                    type filter hook input priority 0; policy accept;
+                    tcp dport @portas_liberadas  counter accept
+                    tcp dport @portas_bloqueadas counter drop
+                }
+
+            }
+        dest:
+            /tmp/filtro_debug_remoto.nft
