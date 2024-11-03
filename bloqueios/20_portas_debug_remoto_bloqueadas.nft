@@ -12,9 +12,10 @@ table ip filter {
 	   } 
 	}
 
-    chain debug_remoto {
+    chain input {
         type filter hook input priority 0; policy accept;
-		tcp dport @portas_liberadas  counter accept
-		tcp dport @portas_bloqueadas counter drop
+        tcp dport @portas_liberadas  counter accept
+        tcp dport @portas_bloqueadas counter drop
     }
+
 }

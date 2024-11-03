@@ -3,15 +3,11 @@ table ip filter {
     set clientes_ftp_permitidos {
         type ipv4_addr
         elements = {
-            127.0.0.1,
-            192.168.122.1,
-            192.168.122.2
+            192.168.122.1
         }
     }
 
-    chain controle_ftp {
-
-        type filter hook input priority 0; policy accept;
+    chain input {
 
         ip saddr @clientes_ftp_permitidos tcp dport 21 counter accept
         tcp dport 21 counter drop
