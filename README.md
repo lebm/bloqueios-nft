@@ -1,3 +1,6 @@
+# NAO USAR
+## A solução usando named-sets é melhor. 
+
 # Bloqueios específicos usando nftables
 
 * bloqueios.nft cria a tabela filter e uma regra de conntrack e inclui /etc/nftables/bloqueios/*.nft
